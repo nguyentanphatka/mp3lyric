@@ -1,0 +1,17 @@
+{
+  //"Serilog": {
+  //  "MinimumLevel": {
+  //    "Default": "Information",
+  //    "Override": {
+  //      "Microsoft": "Warning",
+  //      "Microsoft.Hosting.Lifetime": "Information"
+  //    }
+  //  }
+  //},
+  "DatabaseInfo": {
+    "ConnectionString": "mongodb://phatnguyen:Nguyentanphatka1@213.136.81.103:27017",
+    "DatabaseName": "Mp3Lyric",
+    "SingerCollectionName": "Singer",
+    "SongCollectionName": "Song"
+  }
+}
