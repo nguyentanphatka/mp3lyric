@@ -7,6 +7,7 @@ using System.Web;
 using HtmlAgilityPack;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using Mp3Lyric.Logging;
 using Mp3Lyric.Mongodb.Common;
 using Mp3Lyric.Mongodb.DbSetting;
 using Mp3Lyric.Mongodb.EntityModel;
@@ -18,37 +19,37 @@ namespace Mp3Lyric.Services
     {
 
         private readonly IDbContext _dbContext;
-
         public CrawlServices(IDbContext dbContext)
         {
             this._dbContext = dbContext;
         }
 
         #region Common funtion
+        [LogMethod]
         static HtmlNode GetRootNode(string url)
         {
             var web = new HtmlWeb();
             var doc = web.Load(url);
             return doc.DocumentNode;
         }
-
+        [LogMethod]
         static string GetHtml(HtmlNode node, string xpath)
         {
             var singleNode = node.SelectSingleNode(xpath);
             return singleNode?.InnerHtml ?? string.Empty;
         }
-
+        [LogMethod]
         static string GetText(HtmlNode node)
         {
             return node?.InnerText ?? string.Empty;
         }
-
+        [LogMethod]
         static string GetText(HtmlNode node, string xpath)
         {
             var _node = node.SelectSingleNode(xpath);
             return _node?.InnerText ?? string.Empty;
         }
-
+        [LogMethod]
         static string? GetAttribute(HtmlNode node, string xpath, string attributeName)
         {
             var singleNode = node;
@@ -60,7 +61,7 @@ namespace Mp3Lyric.Services
                 return singleNode.Attributes?[attributeName]?.Value;
             return null;
         }
-
+        [LogMethod]
         static List<string> GetMultipleText(HtmlNode node, string xpath)
         {
             var resultList = new List<string>();
@@ -73,14 +74,14 @@ namespace Mp3Lyric.Services
             }
             return resultList;
         }
-
+        [LogMethod]
         static HtmlNodeCollection GetChildNodes(HtmlNode node, string xpath)
         {
             return node.SelectNodes(xpath);
         }
 
         #endregion
-
+        [LogMethod]
         public async Task CrawlLyricAsync()
         {
             var headCrawlUrl =

@@ -1,11 +1,14 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Castle.Core.Logging;
+using Castle.DynamicProxy;
+using Microsoft.Extensions.Configuration;
 using Serilog;
 using Microsoft.Extensions.DependencyInjection;
+using Mp3Lyric.Extension;
+using Mp3Lyric.Logging;
 using Mp3Lyric.Mongodb.DbSetting;
 using Mp3Lyric.Services;
+using ILogger = Serilog.ILogger;
 
-var services = new ServiceCollection()
-    .AddLogging(builder => builder.AddSerilog());
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
@@ -15,13 +18,23 @@ Log.Logger = new LoggerConfiguration()
 Log.Information("Starting up");
 
 var configurationBuilder = new ConfigurationBuilder()
-    .SetBasePath(Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\")))
-    .AddJsonFile("config.json").Build();
-var dbSettings = configurationBuilder.GetSection("DatabaseInfo");
+     .SetBasePath(Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\..\")))
+    //.SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("config.json")
+    .Build();
 
-services.AddScoped<ICrawlServices, CrawlServices>();
+
+var services = new ServiceCollection();
+
+var dbSettings = configurationBuilder.GetSection("DatabaseInfo");
 services.Configure<DatabaseInfo>(dbSettings);
 services.AddScoped<IDbContext, DbContext>();
+
+services.AddSingleton(Log.Logger);
+services.AddTransient<LoggingInterceptor>();
+services.AddTransient<IInterceptor, LoggingInterceptor>();
+services.AddLoggingInterceptor<ICrawlServices, CrawlServices>();
+//services.AddScoped<ICrawlServices, CrawlServices>();
 
 var serviceProvider = services.BuildServiceProvider();
 var crawlService = (ICrawlServices)serviceProvider.GetService(typeof(ICrawlServices));

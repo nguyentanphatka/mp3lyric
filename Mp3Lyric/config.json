@@ -1,15 +1,26 @@
 {
-  //"Serilog": {
-  //  "MinimumLevel": {
-  //    "Default": "Information",
-  //    "Override": {
-  //      "Microsoft": "Warning",
-  //      "Microsoft.Hosting.Lifetime": "Information"
-  //    }
-  //  }
-  //},
+  "Serilog": {
+    "MinimumLevel": "Debug",
+    "WriteTo": [
+      {
+        "Name": "File",
+        "Args": {
+          "path": "log.txt",
+          "rollingInterval": "Day",
+          "outputTemplate": "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}"
+        }
+      },
+      {
+        "Name": "Console"
+      }
+    ],
+    "Enrich": [ "FromLogContext" ],
+    "Properties": {
+      "Application": "YourApplicationName"
+    }
+  },
   "DatabaseInfo": {
-    "ConnectionString": "mongodb://phatnguyen:Nguyentanphatka1@213.136.81.103:27017",
+    "ConnectionString": "mongodb://localhost:27017",
     "DatabaseName": "Mp3Lyric",
     "SingerCollectionName": "Singer",
     "SongCollectionName": "Song"
